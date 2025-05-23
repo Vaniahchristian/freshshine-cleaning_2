@@ -64,11 +64,11 @@ export default function Navbar() {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.id)}
-                className="px-4 py-2 rounded-xl font-medium transition-all duration-300 text-gray-700 hover:text-emerald-600"
+                className="px-4 py-2 rounded-xl font-bold transition-all duration-300 text-gray-700 hover:text-emerald-600"
               >
                 {item.name}
               </button>
-            ))}
+            ))}     
           </div>
 
           {/* CTA Button */}
@@ -116,7 +116,7 @@ export default function Navbar() {
                 <button
                   key={item.name}
                   onClick={() => scrollToSection(item.id)}
-                  className="block w-full text-left px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-300 font-medium"
+                  className="block w-full text-left px-4 py-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-300 font-bold"
                 >
                   {item.name}
                 </button>
