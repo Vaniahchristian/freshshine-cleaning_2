@@ -145,7 +145,7 @@ export default function HeroSection() {
           >
             <div className="relative">
               {/* Main Image */}
-              <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl">
+              <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl mt-24">
                 <img
                   src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=700&fit=crop&crop=center"
                   alt="Professional Cleaning Service"
@@ -155,7 +155,7 @@ export default function HeroSection() {
               </div>
 
               {/* Floating Cards */}
-              <motion.div
+              {/* <motion.div
                 animate={{ y: [-10, 10, -10] }}
                 transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                 className="absolute -top-6 -left-6 bg-white rounded-2xl p-4 shadow-xl border border-gray-100"
@@ -169,9 +169,9 @@ export default function HeroSection() {
                     <p className="text-sm text-gray-600">Professional</p>
                   </div>
                 </div>
-              </motion.div>
+              </motion.div> */}
 
-              <motion.div
+              {/* <motion.div
                 animate={{ y: [10, -10, 10] }}
                 transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                 className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-4 shadow-xl border border-gray-100"
@@ -180,7 +180,7 @@ export default function HeroSection() {
                   <p className="text-2xl font-bold text-emerald-600">24/7</p>
                   <p className="text-sm text-gray-600">Available</p>
                 </div>
-              </motion.div>
+              </motion.div> */}
 
               {/* Background Decoration */}
               <div className="absolute -inset-4 bg-gradient-to-br from-emerald-200/20 to-blue-200/20 rounded-3xl -z-10 blur-xl" />

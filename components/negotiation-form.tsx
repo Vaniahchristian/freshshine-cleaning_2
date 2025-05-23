@@ -149,7 +149,7 @@ export default function NegotiationForm({ isOpen, onClose, selectedService }: Ne
                     <Input id="location" placeholder="Your address" {...register("location")} />
                   </div>
 
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label>Payment Method</Label>
                     <RadioGroup defaultValue="mtn" onValueChange={(value) => setValue("paymentMethod", value)}>
                       <div className="flex items-center space-x-2">
@@ -161,7 +161,7 @@ export default function NegotiationForm({ isOpen, onClose, selectedService }: Ne
                         <Label htmlFor="airtel">Airtel Mobile Money</Label>
                       </div>
                     </RadioGroup>
-                  </div>
+                  </div> */}
 
                   <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600" disabled={isSubmitting}>
                     {isSubmitting ? "Submitting..." : "Submit Request"}

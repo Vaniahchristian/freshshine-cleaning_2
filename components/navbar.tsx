@@ -46,11 +46,7 @@ export default function Navbar() {
               </div>
               <div className="absolute -inset-1 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-xl blur group-hover:blur-md transition-all duration-300" />
             </div>
-            <span
-              className={`text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent ${
-                !isScrolled ? "text-white" : ""
-              }`}
-            >
+            <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
               FreshShine
             </span>
           </Link>
@@ -68,9 +64,7 @@ export default function Navbar() {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.id)}
-                className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:bg-white/10 ${
-                  isScrolled ? "text-gray-700 hover:text-emerald-600" : "text-white"
-                }`}
+                className="px-4 py-2 rounded-xl font-medium transition-all duration-300 text-gray-700 hover:text-emerald-600"
               >
                 {item.name}
               </button>
@@ -93,7 +87,7 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(!isOpen)}
-              className={`${isScrolled ? "text-gray-700" : "text-white"} hover:bg-white/10`}
+              className={`${isScrolled ? "text-gray-700" : "text-gray-700"} hover:bg-white/10`}
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
