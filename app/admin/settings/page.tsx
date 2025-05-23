@@ -1,0 +1,211 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/lib/auth"
+import AdminLayout from "@/components/admin/admin-layout"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useForm } from "react-hook-form"
+import { User, Lock } from "lucide-react"
+
+export default function SettingsPage() {
+  const { isAuthenticated, user } = useAuth()
+  const router = useRouter()
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+
+  if (!isAuthenticated) {
+    router.push("/admin")
+    return null
+  }
+
+  const handleSaveProfile = (data: any) => {
+    setIsSaving(true)
+
+    // Simulate API call
+    setTimeout(() => {
+      console.log("Profile updated:", data)
+      setIsSaving(false)
+      setSaveSuccess(true)
+
+      // Reset success message after 3 seconds
+      setTimeout(() => setSaveSuccess(false), 3000)
+    }, 1000)
+  }
+
+  const handleChangePassword = (data: any) => {
+    setIsSaving(true)
+
+    // Simulate API call
+    setTimeout(() => {
+      console.log("Password changed:", data)
+      setIsSaving(false)
+      setSaveSuccess(true)
+
+      // Reset success message after 3 seconds
+      setTimeout(() => setSaveSuccess(false), 3000)
+    }, 1000)
+  }
+
+  return (
+    <AdminLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+          <p className="text-gray-500 mt-2">Manage your account settings and preferences.</p>
+        </div>
+
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="password">Password</TabsTrigger>
+          </TabsList>
+          <TabsContent value="profile" className="mt-6">
+            <ProfileForm
+              onSave={handleSaveProfile}
+              isSaving={isSaving}
+              saveSuccess={saveSuccess}
+              username={user?.username}
+            />
+          </TabsContent>
+          <TabsContent value="password" className="mt-6">
+            <PasswordForm onSave={handleChangePassword} isSaving={isSaving} saveSuccess={saveSuccess} />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </AdminLayout>
+  )
+}
+
+function ProfileForm({ onSave, isSaving, saveSuccess, username }: any) {
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      username: username || "admin",
+      email: "admin@freshshine.com",
+      fullName: "Admin User",
+    },
+  })
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Profile Information</CardTitle>
+        <CardDescription>Update your account details.</CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit(onSave)}>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="username">Username</Label>
+            <Input id="username" {...register("username")} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" {...register("email")} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input id="fullName" {...register("fullName")} />
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <div>{saveSuccess && <p className="text-green-600">Profile updated successfully!</p>}</div>
+          <Button type="submit" className="bg-amber-500 hover:bg-amber-600" disabled={isSaving}>
+            {isSaving ? (
+              "Saving..."
+            ) : (
+              <>
+                <User className="h-4 w-4 mr-2" /> Update Profile
+              </>
+            )}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
+  )
+}
+
+function PasswordForm({ onSave, isSaving, saveSuccess }: any) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  })
+
+  const newPassword = watch("newPassword")
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Change Password</CardTitle>
+        <CardDescription>Update your password to keep your account secure.</CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit(onSave)}>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="currentPassword">Current Password</Label>
+            <Input
+              id="currentPassword"
+              type="password"
+              {...register("currentPassword", { required: "Current password is required" })}
+            />
+            {errors.currentPassword && (
+              <p className="text-red-500 text-sm">{errors.currentPassword.message as string}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="newPassword">New Password</Label>
+            <Input
+              id="newPassword"
+              type="password"
+              {...register("newPassword", {
+                required: "New password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+              })}
+            />
+            {errors.newPassword && <p className="text-red-500 text-sm">{errors.newPassword.message as string}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) => value === newPassword || "Passwords do not match",
+              })}
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm">{errors.confirmPassword.message as string}</p>
+            )}
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <div>{saveSuccess && <p className="text-green-600">Password changed successfully!</p>}</div>
+          <Button type="submit" className="bg-amber-500 hover:bg-amber-600" disabled={isSaving}>
+            {isSaving ? (
+              "Saving..."
+            ) : (
+              <>
+                <Lock className="h-4 w-4 mr-2" /> Change Password
+              </>
+            )}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
+  )
+}
