@@ -13,7 +13,36 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50">
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+  {/* SVG Advanced Circuit Patterned Background */}
+<div className="absolute inset-0 bg-white dark:bg-gray-950 -z-10">
+  <div className="absolute inset-0">
+    <svg className="absolute inset-0 w-full h-full opacity-30 dark:opacity-20" xmlns="http://www.w3.org/2000/svg">
+      <pattern id="circuit-advanced" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+        {/* Nodes */}
+        <circle cx="10" cy="10" r="2" className="fill-blue-500 dark:fill-blue-400" />
+        <circle cx="50" cy="10" r="2" className="fill-blue-500 dark:fill-blue-400" />
+        <circle cx="90" cy="10" r="2" className="fill-blue-500 dark:fill-blue-400" />
+        <circle cx="10" cy="50" r="2" className="fill-blue-500 dark:fill-blue-400" />
+        <circle cx="50" cy="50" r="3" className="fill-purple-500 dark:fill-purple-400" />
+        <circle cx="90" cy="50" r="2" className="fill-blue-500 dark:fill-blue-400" />
+        <circle cx="10" cy="90" r="2" className="fill-blue-500 dark:fill-blue-400" />
+        <circle cx="50" cy="90" r="2" className="fill-blue-500 dark:fill-blue-400" />
+        <circle cx="90" cy="90" r="2" className="fill-blue-500 dark:fill-blue-400" />
+        {/* Connections */}
+        <path
+          d="M10 10 H 30 V 50 H 10 M50 10 V 30 H 90 M50 50 H 70 V 90 M10 50 H 30 M50 50 H 70 M90 50 V 70 H 70"
+          stroke="currentColor"
+          strokeWidth="1"
+          className="text-blue-500 dark:text-blue-400"
+          fill="none"
+        />
+      </pattern>
+      <rect width="100%" height="100%" fill="url(#circuit-advanced)" />
+    </svg>
+  </div>
+  <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-purple-50/30 dark:from-blue-950/20 dark:via-transparent dark:to-purple-950/20" />
+</div>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
