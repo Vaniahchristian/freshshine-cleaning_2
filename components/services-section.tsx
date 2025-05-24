@@ -4,12 +4,24 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import ServiceCard from "./service-card"
 import NegotiationForm from "./negotiation-form"
-import { services } from "@/lib/data"
+import { getServices } from '@/lib/api'
+import { Service } from '@/lib/types'
+import { useQuery } from '@tanstack/react-query'
 import { ArrowRight } from "lucide-react"
+import Loader from '@/components/ui/loader'
 
 export default function ServicesSection() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedService, setSelectedService] = useState("")
+
+  const { data: services, isLoading, error } = useQuery<Service[]>({
+    queryKey: ['services'],
+    queryFn: getServices
+  })
+
+  if (isLoading) return <Loader />
+  if (error) return <div>Error loading services</div>
+  if (!services) return null
 
   const handleNegotiateClick = (serviceType: string) => {
     setSelectedService(serviceType)

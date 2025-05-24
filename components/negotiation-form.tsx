@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState } from 'react'
+import { createRequest } from '@/lib/api'
+import { useMutation } from '@tanstack/react-query'
 import { useForm } from "react-hook-form"
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
@@ -33,7 +35,7 @@ export default function NegotiationForm({ isOpen, onClose, selectedService }: Ne
 
   const {
     register,
-    handleSubmit,
+    handleSubmit: handleFormSubmit,
     reset,
     setValue,
     formState: { errors },
@@ -43,30 +45,26 @@ export default function NegotiationForm({ isOpen, onClose, selectedService }: Ne
     },
   })
 
+  const mutation = useMutation({
+    mutationFn: createRequest,
+    onSuccess: () => {
+      onClose()
+      reset()
+      setIsSuccess(true)
+    },
+  })
+
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true)
+    mutation.mutate(data)
+  }
+
   // Set the selected service when it changes
   useState(() => {
     if (selectedService) {
       setValue("serviceType", selectedService)
     }
   })
-
-  const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    console.log("Form submitted:", data)
-    setIsSubmitting(false)
-    setIsSuccess(true)
-
-    // Reset form after 2 seconds
-    setTimeout(() => {
-      reset()
-      setIsSuccess(false)
-      onClose()
-    }, 2000)
-  }
 
   return (
     <AnimatePresence>
@@ -92,7 +90,7 @@ export default function NegotiationForm({ isOpen, onClose, selectedService }: Ne
                   <p className="text-gray-600">We'll contact you shortly to discuss your service needs.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
                     <Input id="name" placeholder="Your name" {...register("name", { required: "Name is required" })} />

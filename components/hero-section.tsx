@@ -1,10 +1,21 @@
 "use client"
 
+import { getSiteContent } from '@/lib/api'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from "@/components/ui/button"
+import Loader from '@/components/ui/loader'
 import { motion } from "framer-motion"
 import { Play, Star, Users, Award, Sparkles } from "lucide-react"
 
 export default function HeroSection() {
+  const { data: hero, isLoading, error } = useQuery({
+    queryKey: ['hero'],
+    queryFn: () => getSiteContent('hero')
+  })
+  
+  if (isLoading) return <Loader />
+  if (error) return <div>Error loading hero content</div>
+  if (!hero) return null
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id)
     if (element) {

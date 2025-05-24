@@ -1,9 +1,20 @@
 "use client"
 
+import { getSiteContent } from '@/lib/api'
+import { useQuery } from '@tanstack/react-query'
 import { motion } from "framer-motion"
+import Loader from '@/components/ui/loader'
 import { CheckCircle, Calendar, Sparkles, ArrowRight } from "lucide-react"
 
 export default function HowItWorks() {
+  const { data: howItWorks, isLoading, error } = useQuery({
+    queryKey: ['howItWorks'],
+    queryFn: () => getSiteContent('howItWorks')
+  })
+
+  if (isLoading) return <Loader />
+  if (error) return <div>Error loading how it works content</div>
+  if (!howItWorks) return null
   const steps = [
     {
       icon: <CheckCircle className="h-8 w-8 text-white" />,

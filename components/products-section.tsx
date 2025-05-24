@@ -3,13 +3,26 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import ProductCard from "./product-card"
-import { products } from "@/lib/data"
+import { getProducts, getProductsByCategory } from '@/lib/api'
+import { Product } from '@/lib/types'
+import { useQuery } from '@tanstack/react-query'
+import { getSiteContent } from '@/lib/api'
+import Loader from '@/components/ui/loader'
 import { ShoppingBag, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function ProductsSection() {
   const [cart, setCart] = useState<{ id: number; quantity: number }[]>([])
-  const [selectedCategory, setSelectedCategory] = useState("All")
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  
+  const { data: products, isLoading, error } = useQuery<Product[]>({
+    queryKey: ['products', selectedCategory],
+    queryFn: () => selectedCategory === 'all' ? getProducts() : getProductsByCategory(selectedCategory)
+  })
+
+  if (isLoading) return <Loader />
+  if (error) return <div>Error loading products</div>
+  if (!products) return null
 
   const addToCart = (productId: number) => {
     setCart((prevCart) => {
