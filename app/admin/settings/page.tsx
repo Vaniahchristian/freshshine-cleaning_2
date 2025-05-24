@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth"
 import AdminLayout from "@/components/admin/admin-layout"
@@ -11,44 +11,51 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useForm } from "react-hook-form"
 import { User, Lock } from "lucide-react"
+import { updateProfile, changePassword } from "@/lib/api"
+import Loader from "@/components/ui/loader"
 
 export default function SettingsPage() {
   const { isAuthenticated, user } = useAuth()
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  const [error, setError] = useState<string>('')
 
-  if (!isAuthenticated) {
-    router.push("/admin")
-    return null
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/admin")
+    }
+  }, [isAuthenticated, router])
+
+  const handleSaveProfile = async (data: any) => {
+    setIsSaving(true)
+    setError('')
+    try {
+      await updateProfile(data)
+      setSaveSuccess(true)
+      setTimeout(() => setSaveSuccess(false), 3000)
+    } catch (err) {
+      setError('Failed to update profile')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
-  const handleSaveProfile = (data: any) => {
+  const handleChangePassword = async (data: any) => {
     setIsSaving(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Profile updated:", data)
-      setIsSaving(false)
+    setError('')
+    try {
+      await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword
+      })
       setSaveSuccess(true)
-
-      // Reset success message after 3 seconds
       setTimeout(() => setSaveSuccess(false), 3000)
-    }, 1000)
-  }
-
-  const handleChangePassword = (data: any) => {
-    setIsSaving(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Password changed:", data)
+    } catch (err) {
+      setError('Failed to change password')
+    } finally {
       setIsSaving(false)
-      setSaveSuccess(true)
-
-      // Reset success message after 3 seconds
-      setTimeout(() => setSaveSuccess(false), 3000)
-    }, 1000)
+    }
   }
 
   return (
@@ -81,7 +88,14 @@ export default function SettingsPage() {
   )
 }
 
-function ProfileForm({ onSave, isSaving, saveSuccess, username }: any) {
+interface ProfileFormProps {
+  onSave: (data: { username: string; email: string; fullName: string }) => void;
+  isSaving: boolean;
+  saveSuccess: boolean;
+  username?: string;
+}
+
+function ProfileForm({ onSave, isSaving, saveSuccess, username }: ProfileFormProps) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       username: username || "admin",
@@ -128,7 +142,13 @@ function ProfileForm({ onSave, isSaving, saveSuccess, username }: any) {
   )
 }
 
-function PasswordForm({ onSave, isSaving, saveSuccess }: any) {
+interface PasswordFormProps {
+  onSave: (data: { currentPassword: string; newPassword: string; confirmPassword: string }) => void;
+  isSaving: boolean;
+  saveSuccess: boolean;
+}
+
+function PasswordForm({ onSave, isSaving, saveSuccess }: PasswordFormProps) {
   const {
     register,
     handleSubmit,

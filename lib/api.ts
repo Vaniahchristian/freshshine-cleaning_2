@@ -175,5 +175,23 @@ export const updateRequestStatus = async (id: number, status: 'pending' | 'handl
   }
 };
 
-// Site Content
+// User Settings
+export const updateProfile = async (data: { username: string; email: string; fullName: string }): Promise<any> => {
+  try {
+    const response = await axios.patch(`${API_URL}/settings/profile`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    throw error;
+  }
+};
 
+export const changePassword = async (data: { currentPassword: string; newPassword: string }): Promise<any> => {
+  try {
+    const response = await axios.patch(`${API_URL}/settings/password`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error changing password:', error);
+    throw error;
+  }
+};
