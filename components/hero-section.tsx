@@ -183,34 +183,6 @@ export default function HeroSection() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
 
-              {/* Floating Cards */}
-              {/* <motion.div
-                animate={{ y: [-10, 10, -10] }}
-                transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                className="absolute -top-6 -left-6 bg-white rounded-2xl p-4 shadow-xl border border-gray-100"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-xl flex items-center justify-center">
-                    <Award className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">Certified</p>
-                    <p className="text-sm text-gray-600">Professional</p>
-                  </div>
-                </div>
-              </motion.div> */}
-
-              {/* <motion.div
-                animate={{ y: [10, -10, 10] }}
-                transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-4 shadow-xl border border-gray-100"
-              >
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-emerald-600">24/7</p>
-                  <p className="text-sm text-gray-600">Available</p>
-                </div>
-              </motion.div> */}
-
               {/* Background Decoration */}
               <div className="absolute -inset-4 bg-gradient-to-br from-emerald-200/20 to-blue-200/20 rounded-3xl -z-10 blur-xl" />
             </div>
