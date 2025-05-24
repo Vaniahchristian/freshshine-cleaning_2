@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth"
 import AdminLayout from "@/components/admin/admin-layout"
@@ -10,41 +10,49 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { siteContent as initialSiteContent } from "@/lib/data"
 import { useForm } from "react-hook-form"
 import { Save } from "lucide-react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { getSiteContent, updateSiteContent } from "@/lib/api"
+import type { SiteContent } from "@/lib/types"
+import Loader from "@/components/ui/loader"
 
 export default function ContentPage() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
-  const [siteContent, setSiteContent] = useState(initialSiteContent)
+  const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState("hero")
   const [isSaving, setIsSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
 
-  if (!isAuthenticated) {
-    router.push("/admin")
-    return null
-  }
+  const { data: siteContent, isLoading, error } = useQuery<SiteContent>({
+    queryKey: ['site-content'],
+    queryFn: () => getSiteContent('all'),
+    retry: false
+  })
 
-  const handleSaveContent = (section: string, data: any) => {
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/admin")
+    }
+  }, [isAuthenticated, router])
+
+  if (isLoading) return <Loader />
+  if (error) return <div>Error loading site content</div>
+  if (!siteContent) return null
+
+  const handleSaveContent = async (section: keyof SiteContent, data: any) => {
     setIsSaving(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setSiteContent({
-        ...siteContent,
-        [section]: {
-          ...siteContent[section as keyof typeof siteContent],
-          ...data,
-        },
-      })
-      setIsSaving(false)
+    try {
+      await updateSiteContent(section, data)
+      queryClient.invalidateQueries(['site-content'])
       setSaveSuccess(true)
-
-      // Reset success message after 3 seconds
       setTimeout(() => setSaveSuccess(false), 3000)
-    }, 1000)
+    } catch (error) {
+      console.error(`Error saving ${section} content:`, error)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -104,7 +112,14 @@ export default function ContentPage() {
   )
 }
 
-function HeroContentForm({ content, onSave, isSaving, saveSuccess }: any) {
+interface HeroContentFormProps {
+  content: SiteContent['hero'];
+  onSave: (data: any) => void;
+  isSaving: boolean;
+  saveSuccess: boolean;
+}
+
+function HeroContentForm({ content, onSave, isSaving, saveSuccess }: HeroContentFormProps) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       title: content.title,
@@ -146,7 +161,14 @@ function HeroContentForm({ content, onSave, isSaving, saveSuccess }: any) {
   )
 }
 
-function AboutContentForm({ content, onSave, isSaving, saveSuccess }: any) {
+interface AboutContentFormProps {
+  content: SiteContent['about'];
+  onSave: (data: any) => void;
+  isSaving: boolean;
+  saveSuccess: boolean;
+}
+
+function AboutContentForm({ content, onSave, isSaving, saveSuccess }: AboutContentFormProps) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       title: content.title,
@@ -189,17 +211,26 @@ function AboutContentForm({ content, onSave, isSaving, saveSuccess }: any) {
   )
 }
 
-function HowItWorksContentForm({ content, onSave, isSaving, saveSuccess }: any) {
+interface ContentFormProps {
+  content: SiteContent['howItWorks'];
+  onSave: (data: any) => void;
+  isSaving: boolean;
+  saveSuccess: boolean;
+}
+
+function HowItWorksContentForm({ content, onSave, isSaving, saveSuccess }: ContentFormProps) {
+  const defaultSteps = content?.steps || [{ title: '', description: '' }, { title: '', description: '' }, { title: '', description: '' }];
+  
   const { register, handleSubmit } = useForm({
     defaultValues: {
-      title: content.title,
-      subtitle: content.subtitle,
-      "steps[0].title": content.steps[0].title,
-      "steps[0].description": content.steps[0].description,
-      "steps[1].title": content.steps[1].title,
-      "steps[1].description": content.steps[1].description,
-      "steps[2].title": content.steps[2].title,
-      "steps[2].description": content.steps[2].description,
+      title: content?.title || '',
+      subtitle: content?.subtitle || '',
+      "steps[0].title": defaultSteps[0]?.title || '',
+      "steps[0].description": defaultSteps[0]?.description || '',
+      "steps[1].title": defaultSteps[1]?.title || '',
+      "steps[1].description": defaultSteps[1]?.description || '',
+      "steps[2].title": defaultSteps[2]?.title || '',
+      "steps[2].description": defaultSteps[2]?.description || '',
     },
   })
 
@@ -284,7 +315,14 @@ function HowItWorksContentForm({ content, onSave, isSaving, saveSuccess }: any) 
   )
 }
 
-function FooterContentForm({ content, onSave, isSaving, saveSuccess }: any) {
+interface FooterContentFormProps {
+  content: SiteContent['footer'];
+  onSave: (data: any) => void;
+  isSaving: boolean;
+  saveSuccess: boolean;
+}
+
+function FooterContentForm({ content, onSave, isSaving, saveSuccess }: FooterContentFormProps) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       "businessHours.weekdays": content.businessHours.weekdays,

@@ -16,22 +16,33 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { requests as initialRequests } from "@/lib/data"
 import { Eye, Search, CheckCircle } from "lucide-react"
-import type { Request } from "@/lib/data"
+import type { Request } from "@/lib/types"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { getRequests, updateRequestStatus } from "@/lib/api"
+import Loader from "@/components/ui/loader"
 
 export default function RequestsPage() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
-  const [requests, setRequests] = useState(initialRequests)
+  const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [currentRequest, setCurrentRequest] = useState<Request | null>(null)
+
+  const { data: requests, isLoading, error } = useQuery<Request[]>({
+    queryKey: ['requests'],
+    queryFn: getRequests
+  })
 
   if (!isAuthenticated) {
     router.push("/admin")
     return null
   }
+
+  if (isLoading) return <Loader />
+  if (error) return <div>Error loading requests</div>
+  if (!requests) return null
 
   const filteredRequests = requests.filter(
     (request) =>
@@ -40,12 +51,14 @@ export default function RequestsPage() {
       request.date.includes(searchTerm),
   )
 
-  const handleMarkAsHandled = (requestId: number) => {
-    const updatedRequests = requests.map((request) =>
-      request.id === requestId ? { ...request, status: "handled" as const } : request,
-    )
-    setRequests(updatedRequests)
-    setIsViewDialogOpen(false)
+  const handleMarkAsHandled = async (requestId: number) => {
+    try {
+      await updateRequestStatus(requestId, 'handled')
+      queryClient.invalidateQueries(['requests'])
+      setIsViewDialogOpen(false)
+    } catch (error) {
+      console.error('Error updating request status:', error)
+    }
   }
 
   return (

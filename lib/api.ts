@@ -113,19 +113,66 @@ export const getRequests = async (): Promise<Request[]> => {
 };
 
 // Site Content
+const defaultSiteContent: SiteContent = {
+  hero: { title: '', subtitle: '' },
+  about: { title: '', content: '' },
+  howItWorks: { 
+    title: '', 
+    subtitle: '', 
+    steps: [{ title: '', description: '' }, { title: '', description: '' }, { title: '', description: '' }] 
+  },
+  footer: {
+    businessHours: { weekdays: '', saturday: '', sunday: '' },
+    contact: { address: '', phone: '', email: '' }
+  }
+};
+
 export const getSiteContent = async (section: string): Promise<SiteContent> => {
   try {
-    const response = await axios.get(`${API_URL}/site-content/${section}`);
-    return response.data;
+    const response = await axios.get(`${API_URL}/site-content`);
+    // Ensure all required sections exist with proper structure
+    return {
+      ...defaultSiteContent,
+      ...response.data
+    };
   } catch (error) {
-    console.error(`Error fetching site content for ${section}:`, error);
-    return { content: {} };
+    console.error(`Error fetching site content:`, error);
+    return defaultSiteContent;
+  }
+};
+
+export const updateSiteContent = async (section: keyof SiteContent, content: Partial<SiteContent[keyof SiteContent]>): Promise<SiteContent> => {
+  try {
+    const response = await axios.patch(`${API_URL}/site-content/${section}`, content);
+    // Ensure all required sections exist with proper structure
+    return {
+      ...defaultSiteContent,
+      ...response.data
+    };
+  } catch (error) {
+    console.error(`Error updating site content for ${section}:`, error);
+    throw error;
   }
 };
 
 export const getRequestsByStatus = async (status: 'pending' | 'handled'): Promise<Request[]> => {
-  const response = await axios.get(`${API_URL}/requests/status/${status}`);
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/requests/status/${status}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching requests by status:', error);
+    return [];
+  }
+};
+
+export const updateRequestStatus = async (id: number, status: 'pending' | 'handled'): Promise<Request> => {
+  try {
+    const response = await axios.patch(`${API_URL}/requests/${id}/status`, { status });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating request status:', error);
+    throw error;
+  }
 };
 
 // Site Content
