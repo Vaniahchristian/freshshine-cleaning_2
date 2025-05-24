@@ -14,6 +14,35 @@ export const getServices = async (): Promise<Service[]> => {
   }
 };
 
+export const createService = async (service: Omit<Service, 'id'>): Promise<Service> => {
+  try {
+    const response = await axios.post(`${API_URL}/services`, service);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating service:', error);
+    throw error;
+  }
+};
+
+export const updateService = async (id: number, service: Partial<Service>): Promise<Service> => {
+  try {
+    const response = await axios.put(`${API_URL}/services/${id}`, service);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating service:', error);
+    throw error;
+  }
+};
+
+export const deleteService = async (id: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_URL}/services/${id}`);
+  } catch (error) {
+    console.error('Error deleting service:', error);
+    throw error;
+  }
+};
+
 // Products
 export const getProducts = async (): Promise<Product[]> => {
   try {

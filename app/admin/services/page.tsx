@@ -18,50 +18,68 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { services as initialServices } from "@/lib/data"
 import { Plus, Pencil, Trash2 } from "lucide-react"
 import { useForm } from "react-hook-form"
-import type { Service } from "@/lib/data"
+import type { Service } from "@/lib/types"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { getServices, createService, updateService, deleteService } from "@/lib/api"
+import Loader from "@/components/ui/loader"
 
 export default function ServicesPage() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
-  const [services, setServices] = useState(initialServices)
+  const queryClient = useQueryClient()
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentService, setCurrentService] = useState<Service | null>(null)
+
+  const { data: services, isLoading, error } = useQuery<Service[]>({
+    queryKey: ['services'],
+    queryFn: getServices
+  })
 
   if (!isAuthenticated) {
     router.push("/admin")
     return null
   }
 
-  const handleAddService = (data: Omit<Service, "id">) => {
-    const newService = {
-      id: services.length + 1,
-      ...data,
+  if (isLoading) return <Loader />
+  if (error) return <div>Error loading services</div>
+  if (!services) return null
+
+  const handleAddService = async (data: Omit<Service, "id">) => {
+    try {
+      await createService(data)
+      queryClient.invalidateQueries(['services'])
+      setIsAddDialogOpen(false)
+    } catch (error) {
+      console.error('Error adding service:', error)
     }
-    setServices([...services, newService])
-    setIsAddDialogOpen(false)
   }
 
-  const handleEditService = (data: Omit<Service, "id">) => {
+  const handleEditService = async (data: Omit<Service, "id">) => {
     if (!currentService) return
 
-    const updatedServices = services.map((service) =>
-      service.id === currentService.id ? { ...service, ...data } : service,
-    )
-    setServices(updatedServices)
-    setIsEditDialogOpen(false)
+    try {
+      await updateService(currentService.id, data)
+      queryClient.invalidateQueries(['services'])
+      setIsEditDialogOpen(false)
+    } catch (error) {
+      console.error('Error updating service:', error)
+    }
   }
 
-  const handleDeleteService = () => {
+  const handleDeleteService = async () => {
     if (!currentService) return
 
-    const updatedServices = services.filter((service) => service.id !== currentService.id)
-    setServices(updatedServices)
-    setIsDeleteDialogOpen(false)
+    try {
+      await deleteService(currentService.id)
+      queryClient.invalidateQueries(['services'])
+      setIsDeleteDialogOpen(false)
+    } catch (error) {
+      console.error('Error deleting service:', error)
+    }
   }
 
   return (
