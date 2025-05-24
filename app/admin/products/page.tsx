@@ -18,54 +18,75 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { products as initialProducts } from "@/lib/data"
 import { Plus, Pencil, Trash2 } from "lucide-react"
 import { useForm } from "react-hook-form"
-import type { Product } from "@/lib/data"
+import type { Product } from "@/lib/types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { getProducts, createProduct, updateProduct, deleteProduct } from "@/lib/api"
+import Loader from "@/components/ui/loader"
 
 export default function ProductsPage() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
-  const [products, setProducts] = useState(initialProducts)
+  const queryClient = useQueryClient()
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null)
+
+  const { data: products, isLoading, error } = useQuery<Product[]>({
+    queryKey: ['products'],
+    queryFn: getProducts
+  })
 
   if (!isAuthenticated) {
     router.push("/admin")
     return null
   }
 
-  const handleAddProduct = (data: Omit<Product, "id">) => {
-    const newProduct = {
-      id: products.length + 1,
-      ...data,
-      price: Number.parseFloat(data.price.toString()),
+  if (isLoading) return <Loader />
+  if (error) return <div>Error loading products</div>
+  if (!products) return null
+
+  const handleAddProduct = async (data: Omit<Product, "id">) => {
+    try {
+      await createProduct({
+        ...data,
+        price: Number.parseFloat(data.price.toString()),
+      })
+      queryClient.invalidateQueries(['products'])
+      setIsAddDialogOpen(false)
+    } catch (error) {
+      console.error('Error adding product:', error)
     }
-    setProducts([...products, newProduct])
-    setIsAddDialogOpen(false)
   }
 
-  const handleEditProduct = (data: Omit<Product, "id">) => {
+  const handleEditProduct = async (data: Omit<Product, "id">) => {
     if (!currentProduct) return
 
-    const updatedProducts = products.map((product) =>
-      product.id === currentProduct.id
-        ? { ...product, ...data, price: Number.parseFloat(data.price.toString()) }
-        : product,
-    )
-    setProducts(updatedProducts)
-    setIsEditDialogOpen(false)
+    try {
+      await updateProduct(currentProduct.id, {
+        ...data,
+        price: Number.parseFloat(data.price.toString())
+      })
+      queryClient.invalidateQueries(['products'])
+      setIsEditDialogOpen(false)
+    } catch (error) {
+      console.error('Error updating product:', error)
+    }
   }
 
-  const handleDeleteProduct = () => {
+  const handleDeleteProduct = async () => {
     if (!currentProduct) return
 
-    const updatedProducts = products.filter((product) => product.id !== currentProduct.id)
-    setProducts(updatedProducts)
-    setIsDeleteDialogOpen(false)
+    try {
+      await deleteProduct(currentProduct.id)
+      queryClient.invalidateQueries(['products'])
+      setIsDeleteDialogOpen(false)
+    } catch (error) {
+      console.error('Error deleting product:', error)
+    }
   }
 
   return (
