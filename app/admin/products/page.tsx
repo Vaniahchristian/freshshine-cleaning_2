@@ -117,7 +117,7 @@ export default function ProductsPage() {
                   <TableCell className="font-medium">{product.id}</TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.category}</TableCell>
-                  <TableCell>${product.price.toFixed(2)}</TableCell>
+                  <TableCell>UGX{product.price.toFixed(2)}</TableCell>
                   <TableCell className="hidden md:table-cell max-w-xs truncate">{product.description}</TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
@@ -256,7 +256,7 @@ function AddProductDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="price">Price ($)</Label>
+              <Label htmlFor="price">Price (UGX)</Label>
               <Input
                 id="price"
                 type="number"
@@ -365,7 +365,7 @@ function EditProductDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-price">Price ($)</Label>
+              <Label htmlFor="edit-price">Price (UGX)</Label>
               <Input
                 id="edit-price"
                 type="number"

@@ -1,12 +1,14 @@
 "use client"
 
+import React from "react"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth"
 import AdminLayout from "@/components/admin/admin-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { services, products, requests } from "@/lib/data"
+import { getServices, getProducts, getRequests } from "@/lib/api"
 import { Users, ShoppingBag, MessageSquare, TrendingUp } from "lucide-react"
+import Loader from "@/components/ui/loader"
 
 export default function DashboardPage() {
   const { isAuthenticated } = useAuth()
@@ -22,9 +24,42 @@ export default function DashboardPage() {
     return null
   }
 
-  const pendingRequests = requests.filter((request) => request.status === "pending").length
-  const totalServices = services.length
-  const totalProducts = products.length
+  const [services, setServices] = React.useState<any[]>([]);
+  const [products, setProducts] = React.useState<any[]>([]);
+  const [requests, setRequests] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/admin");
+      return;
+    }
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const [servicesData, productsData, requestsData] = await Promise.all([
+          getServices(),
+          getProducts(),
+          getRequests()
+        ]);
+        setServices(servicesData);
+        setProducts(productsData);
+        setRequests(requestsData);
+      } catch (error) {
+        // Optionally handle error
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) return null;
+  if (loading) return <div><Loader /></div>;
+
+  const pendingRequests = requests.filter((request) => request.status === "pending").length;
+  const totalServices = services.length;
+  const totalProducts = products.length;
 
   return (
     <AdminLayout>
@@ -74,7 +109,7 @@ export default function DashboardPage() {
               <TrendingUp className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$4,325</div>
+              <div className="text-2xl font-bold">UGX 0</div>
               <p className="text-xs text-gray-500">+12% from last month</p>
             </CardContent>
           </Card>
@@ -92,7 +127,7 @@ export default function DashboardPage() {
                   <div key={request.id} className="flex items-center">
                     <div className="ml-4 space-y-1">
                       <p className="text-sm font-medium leading-none">{request.name}</p>
-                      <p className="text-sm text-gray-500">{request.serviceType}</p>
+                      <p className="text-sm text-gray-500">{request.servicetype || request.serviceType}</p>
                     </div>
                     <div className="ml-auto">
                       <span

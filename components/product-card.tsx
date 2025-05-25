@@ -50,7 +50,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-                ${product.price.toFixed(2)}
+                UGX{product.price.toFixed(2)}
               </span>
               <span className="text-xs text-gray-500">Free shipping</span>
             </div>
