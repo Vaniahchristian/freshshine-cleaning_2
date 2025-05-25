@@ -1,26 +1,40 @@
-// Simple mock authentication for demo purposes
 import { create } from "zustand"
+import { createClient, User, Session } from "@supabase/supabase-js"
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 interface AuthState {
   isAuthenticated: boolean
-  user: { username: string } | null
-  login: (username: string, password: string) => Promise<boolean>
-  logout: () => void
+  user: User | null
+  session: Session | null
+  login: (email: string, password: string) => Promise<boolean>
+  logout: () => Promise<void>
+  accessToken: string | null
 }
 
-// In a real app, this would be connected to a backend authentication system
 export const useAuth = create<AuthState>((set) => ({
   isAuthenticated: false,
   user: null,
-  login: async (username: string, password: string) => {
-    // Mock login - in a real app, this would call an API
-    if (username === "admin" && password === "password") {
-      set({ isAuthenticated: true, user: { username } })
-      return true
+  session: null,
+  accessToken: null,
+  login: async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error || !data.session) {
+      set({ isAuthenticated: false, user: null, session: null, accessToken: null })
+      return false
     }
-    return false
+    set({
+      isAuthenticated: true,
+      user: data.user,
+      session: data.session,
+      accessToken: data.session.access_token
+    })
+    return true
   },
-  logout: () => {
-    set({ isAuthenticated: false, user: null })
-  },
+  logout: async () => {
+    await supabase.auth.signOut()
+    set({ isAuthenticated: false, user: null, session: null, accessToken: null })
+  }
 }))

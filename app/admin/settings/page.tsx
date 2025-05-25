@@ -31,11 +31,11 @@ export default function SettingsPage() {
     setIsSaving(true)
     setError('')
     try {
-      await updateProfile(data)
+      await updateProfile({ email: data.email })
       setSaveSuccess(true)
       setTimeout(() => setSaveSuccess(false), 3000)
     } catch (err) {
-      setError('Failed to update profile')
+      setError('Failed to update email')
     } finally {
       setIsSaving(false)
     }
@@ -46,7 +46,6 @@ export default function SettingsPage() {
     setError('')
     try {
       await changePassword({
-        currentPassword: data.currentPassword,
         newPassword: data.newPassword
       })
       setSaveSuccess(true)
@@ -89,50 +88,40 @@ export default function SettingsPage() {
 }
 
 interface ProfileFormProps {
-  onSave: (data: { username: string; email: string; fullName: string }) => void;
+  onSave: (data: { email: string }) => void;
   isSaving: boolean;
   saveSuccess: boolean;
-  username?: string;
+  email?: string;
 }
 
-function ProfileForm({ onSave, isSaving, saveSuccess, username }: ProfileFormProps) {
+function ProfileForm({ onSave, isSaving, saveSuccess, email }: ProfileFormProps) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
-      username: username || "admin",
-      email: "admin@freshshine.com",
-      fullName: "Admin User",
+      email: email || "admin@freshshine.com",
     },
   })
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Profile Information</CardTitle>
-        <CardDescription>Update your account details.</CardDescription>
+        <CardTitle>Email</CardTitle>
+        <CardDescription>Update your account email.</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSave)}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
-            <Input id="username" {...register("username")} />
-          </div>
-          <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" {...register("email")} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input id="fullName" {...register("fullName")} />
-          </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <div>{saveSuccess && <p className="text-green-600">Profile updated successfully!</p>}</div>
+          <div>{saveSuccess && <p className="text-green-600">Email updated successfully!</p>}</div>
           <Button type="submit" className="bg-amber-500 hover:bg-amber-600" disabled={isSaving}>
             {isSaving ? (
               "Saving..."
             ) : (
               <>
-                <User className="h-4 w-4 mr-2" /> Update Profile
+                <User className="h-4 w-4 mr-2" /> Update Email
               </>
             )}
           </Button>
@@ -143,7 +132,7 @@ function ProfileForm({ onSave, isSaving, saveSuccess, username }: ProfileFormPro
 }
 
 interface PasswordFormProps {
-  onSave: (data: { currentPassword: string; newPassword: string; confirmPassword: string }) => void;
+  onSave: (data: { newPassword: string; confirmPassword: string }) => void;
   isSaving: boolean;
   saveSuccess: boolean;
 }
@@ -156,7 +145,6 @@ function PasswordForm({ onSave, isSaving, saveSuccess }: PasswordFormProps) {
     watch,
   } = useForm({
     defaultValues: {
-      currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
@@ -172,17 +160,6 @@ function PasswordForm({ onSave, isSaving, saveSuccess }: PasswordFormProps) {
       </CardHeader>
       <form onSubmit={handleSubmit(onSave)}>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="currentPassword">Current Password</Label>
-            <Input
-              id="currentPassword"
-              type="password"
-              {...register("currentPassword", { required: "Current password is required" })}
-            />
-            {errors.currentPassword && (
-              <p className="text-red-500 text-sm">{errors.currentPassword.message as string}</p>
-            )}
-          </div>
           <div className="space-y-2">
             <Label htmlFor="newPassword">New Password</Label>
             <Input

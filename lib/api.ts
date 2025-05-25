@@ -176,22 +176,36 @@ export const updateRequestStatus = async (id: number, status: 'pending' | 'handl
 };
 
 // User Settings
-export const updateProfile = async (data: { username: string; email: string; fullName: string }): Promise<any> => {
-  try {
-    const response = await axios.patch(`${API_URL}/settings/profile`, data);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating profile:', error);
-    throw error;
-  }
-};
+import { useAuth } from "./auth"
 
-export const changePassword = async (data: { currentPassword: string; newPassword: string }): Promise<any> => {
+export const updateProfile = async (data: { email: string }): Promise<any> => {
+  // Get token from auth store
+  const { accessToken } = useAuth.getState()
   try {
-    const response = await axios.patch(`${API_URL}/settings/password`, data);
-    return response.data;
+    const response = await axios.patch(
+      `${API_URL}/settings/profile`,
+      { email: data.email },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    )
+    return response.data
   } catch (error) {
-    console.error('Error changing password:', error);
-    throw error;
+    console.error('Error updating profile:', error)
+    throw error
   }
-};
+}
+
+export const changePassword = async (data: { newPassword: string }): Promise<any> => {
+  // Get token from auth store
+  const { accessToken } = useAuth.getState()
+  try {
+    const response = await axios.patch(
+      `${API_URL}/settings/password`,
+      { newPassword: data.newPassword },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error changing password:', error)
+    throw error
+  }
+}

@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/auth"
 import { AlertCircle } from "lucide-react"
 
 type FormData = {
-  username: string
+  email: string
   password: string
 }
 
@@ -29,9 +29,9 @@ export default function LoginForm() {
     setError("")
 
     try {
-      const success = await login(data.username, data.password)
+      const success = await login(data.email, data.password)
       if (!success) {
-        setError("Invalid username or password")
+        setError("Invalid email or password")
       }
     } catch (err) {
       setError("An error occurred during login")
@@ -50,9 +50,9 @@ export default function LoginForm() {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" type="text" {...register("username", { required: "Username is required" })} />
-        {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+        <Label htmlFor="email">Email</Label>
+        <Input id="email" type="email" {...register("email", { required: "Email is required" })} />
+        {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
