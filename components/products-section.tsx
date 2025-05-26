@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useCart } from './cart-context'
 import { motion } from "framer-motion"
 import ProductCard from "./product-card"
 import { getProducts } from '@/lib/api'
@@ -11,7 +12,6 @@ import { ShoppingBag, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function ProductsSection() {
-  const [cart, setCart] = useState<{ id: number; quantity: number }[]>([])
   const [selectedCategory, setSelectedCategory] = useState('All')
 
   const { data: allProducts, isLoading, error } = useQuery<Product[]>({
@@ -23,18 +23,9 @@ export default function ProductsSection() {
   if (error) return <div>Error loading products</div>
   if (!allProducts) return null
 
-  const addToCart = (productId: number) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === productId)
-
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
-        )
-      } else {
-        return [...prevCart, { id: productId, quantity: 1 }]
-      }
-    })
+  const { addToCart } = useCart()
+  const handleAddToCart = (product: Product) => {
+    addToCart({ id: product.id, quantity: 1, product })
   }
 
   // Extract all categories from full product list
@@ -57,7 +48,8 @@ export default function ProductsSection() {
     },
   }
 
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0)
+  const { cart } = useCart()
+  const totalItems = cart.reduce((acc: number, item: { quantity: number }) => acc + item.quantity, 0)
 
   return (
     <section id="products" className="py-24 bg-white relative overflow-hidden">
@@ -129,33 +121,10 @@ export default function ProductsSection() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} onAddToCart={() => addToCart(product.id)} />
+            <ProductCard key={product.id} product={product} onAddToCart={() => handleAddToCart(product)} />
           ))}
         </motion.div>
 
-        {/* Cart Summary */}
-        {cart.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-16">
-            <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-3xl p-8 border border-emerald-200 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-2xl flex items-center justify-center">
-                    <ShoppingBag className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">
-                      Cart Updated! ({totalItems} {totalItems === 1 ? "item" : "items"})
-                    </h3>
-                    <p className="text-gray-600">Your products have been added to the cart.</p>
-                  </div>
-                </div>
-                <Button className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white px-6 py-3 rounded-2xl font-semibold">
-                  View Cart
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
       </div>
     </section>
   )
