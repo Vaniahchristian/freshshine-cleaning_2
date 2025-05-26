@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { services } from "@/lib/data"
+import { useEffect } from "react"
 
 interface NegotiationFormProps {
   isOpen: boolean
@@ -23,10 +24,10 @@ interface NegotiationFormProps {
 type FormData = {
   name: string
   phone: string
-  serviceType: string
+  servicetype: string
   description: string
   location: string
-  paymentMethod: string
+  paymentmethod: string
 }
 
 export default function NegotiationForm({ isOpen, onClose, selectedService }: NegotiationFormProps) {
@@ -41,7 +42,7 @@ export default function NegotiationForm({ isOpen, onClose, selectedService }: Ne
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      serviceType: selectedService,
+      servicetype: selectedService,
     },
   })
 
@@ -59,12 +60,19 @@ export default function NegotiationForm({ isOpen, onClose, selectedService }: Ne
     mutation.mutate(data)
   }
 
-  // Set the selected service when it changes
-  useState(() => {
-    if (selectedService) {
-      setValue("serviceType", selectedService)
+  useEffect(() => {
+    if (!isOpen) {
+      setIsSuccess(false)
+      reset()
     }
-  })
+  }, [isOpen, reset])
+
+  // Set the selected service when it changes
+  useEffect(() => {
+    if (selectedService) {
+      setValue("servicetype", selectedService)
+    }
+  }, [selectedService, setValue])
 
   return (
     <AnimatePresence>
@@ -114,8 +122,8 @@ export default function NegotiationForm({ isOpen, onClose, selectedService }: Ne
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="serviceType">Type of Cleaning</Label>
-                    <Select defaultValue={selectedService} onValueChange={(value) => setValue("serviceType", value)}>
+                    <Label htmlFor="servicetype">Type of Cleaning</Label>
+                    <Select defaultValue={selectedService} onValueChange={(value) => setValue("servicetype", value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a service" />
                       </SelectTrigger>
