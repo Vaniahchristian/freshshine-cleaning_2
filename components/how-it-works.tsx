@@ -14,27 +14,31 @@ export default function HowItWorks() {
 
   if (isLoading) return <Loader />
   if (error) return <div>Error loading how it works content</div>
-  if (!howItWorks) return null
-  const steps = [
-    {
-      icon: <CheckCircle className="h-8 w-8 text-white" />,
-      title: "Choose Service",
-      description: "Select from our range of premium cleaning services tailored to your needs.",
-      color: "from-emerald-500 to-emerald-600",
-    },
-    {
-      icon: <Calendar className="h-8 w-8 text-white" />,
-      title: "Book & Schedule",
-      description: "Pick your preferred date and time. We'll send confirmation instantly.",
-      color: "from-blue-500 to-blue-600",
-    },
-    {
-      icon: <Sparkles className="h-8 w-8 text-white" />,
-      title: "Enjoy Results",
-      description: "Our certified professionals deliver exceptional results that exceed expectations.",
-      color: "from-purple-500 to-purple-600",
-    },
-  ]
+  if (!howItWorks || !howItWorks.howItWorks) return null;
+  // Use steps from the database, fallback to default if missing or malformed
+  const dbSteps = Array.isArray(howItWorks.howItWorks.steps) && howItWorks.howItWorks.steps.length > 0
+    ? howItWorks.howItWorks.steps
+    : [
+        { title: "Choose Service", description: "Select from our range of premium cleaning services tailored to your needs." },
+        { title: "Book & Schedule", description: "Pick your preferred date and time. We'll send confirmation instantly." },
+        { title: "Enjoy Results", description: "Our certified professionals deliver exceptional results that exceed expectations." },
+      ];
+  // Assign icons and colors to first three steps
+  const icons = [
+    <CheckCircle className="h-8 w-8 text-white" key="icon1" />, 
+    <Calendar className="h-8 w-8 text-white" key="icon2" />, 
+    <Sparkles className="h-8 w-8 text-white" key="icon3" />
+  ];
+  const colors = [
+    "from-emerald-500 to-emerald-600",
+    "from-blue-500 to-blue-600",
+    "from-purple-500 to-purple-600"
+  ];
+  const steps = dbSteps.slice(0, 3).map((step, i) => ({
+    icon: icons[i] || icons[0],
+    color: colors[i] || colors[0],
+    ...step
+  }));
 
   const container = {
     hidden: { opacity: 0 },
