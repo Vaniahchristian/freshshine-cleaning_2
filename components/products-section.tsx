@@ -3,10 +3,9 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import ProductCard from "./product-card"
-import { getProducts, getProductsByCategory } from '@/lib/api'
+import { getProducts } from '@/lib/api'
 import { Product } from '@/lib/types'
 import { useQuery } from '@tanstack/react-query'
-import { getSiteContent } from '@/lib/api'
 import Loader from '@/components/ui/loader'
 import { ShoppingBag, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -14,43 +13,47 @@ import { Button } from "@/components/ui/button"
 export default function ProductsSection() {
   const [cart, setCart] = useState<{ id: number; quantity: number }[]>([])
   const [selectedCategory, setSelectedCategory] = useState('All')
-  
-  const { data: products, isLoading, error } = useQuery<Product[]>({
-    queryKey: ['products', selectedCategory],
-    queryFn: () => selectedCategory === 'All' ? getProducts() : getProductsByCategory(selectedCategory)
+
+  const { data: allProducts, isLoading, error } = useQuery<Product[]>({
+    queryKey: ['all-products'],
+    queryFn: getProducts,
   })
 
   if (isLoading) return <Loader />
   if (error) return <div>Error loading products</div>
-  if (!products) return null
+  if (!allProducts) return null
 
   const addToCart = (productId: number) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === productId)
 
       if (existingItem) {
-        return prevCart.map((item) => (item.id === productId ? { ...item, quantity: item.quantity + 1 } : item))
+        return prevCart.map((item) =>
+          item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
+        )
       } else {
         return [...prevCart, { id: productId, quantity: 1 }]
       }
     })
   }
 
-  // Dynamically extract unique categories from products
+  // Extract all categories from full product list
   const categories = [
     "All",
-    ...Array.from(new Set(products.map((product) => product.category))).filter(Boolean)
-  ];
+    ...Array.from(new Set(allProducts.map((product) => product.category))).filter(Boolean)
+  ]
+
+  // Filter products client-side
   const filteredProducts =
-    selectedCategory === "All" ? products : products.filter((product) => product.category === selectedCategory)
+    selectedCategory === "All"
+      ? allProducts
+      : allProducts.filter((product) => product.category === selectedCategory)
 
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
+      transition: { staggerChildren: 0.1 },
     },
   }
 
@@ -117,6 +120,7 @@ export default function ProductsSection() {
           </div>
         </motion.div>
 
+        {/* Product Cards */}
         <motion.div
           variants={container}
           initial="hidden"
