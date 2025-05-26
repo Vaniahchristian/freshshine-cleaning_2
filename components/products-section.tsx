@@ -13,11 +13,11 @@ import { Button } from "@/components/ui/button"
 
 export default function ProductsSection() {
   const [cart, setCart] = useState<{ id: number; quantity: number }[]>([])
-  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedCategory, setSelectedCategory] = useState('All')
   
   const { data: products, isLoading, error } = useQuery<Product[]>({
     queryKey: ['products', selectedCategory],
-    queryFn: () => selectedCategory === 'all' ? getProducts() : getProductsByCategory(selectedCategory)
+    queryFn: () => selectedCategory === 'All' ? getProducts() : getProductsByCategory(selectedCategory)
   })
 
   if (isLoading) return <Loader />
@@ -36,7 +36,11 @@ export default function ProductsSection() {
     })
   }
 
-  const categories = ["All", "Household", "Automotive", "Accessories"]
+  // Dynamically extract unique categories from products
+  const categories = [
+    "All",
+    ...Array.from(new Set(products.map((product) => product.category))).filter(Boolean)
+  ];
   const filteredProducts =
     selectedCategory === "All" ? products : products.filter((product) => product.category === selectedCategory)
 
