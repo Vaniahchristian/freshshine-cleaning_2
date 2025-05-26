@@ -241,20 +241,15 @@ function AddProductDialog({
               {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select defaultValue="Household" onValueChange={(value) => setValue("category", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+  <Label htmlFor="category">Category</Label>
+  <Input
+    id="category"
+    {...register("category", { required: "Category is required" })}
+    placeholder="e.g., Household"
+  />
+  {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
+</div>
+
             <div className="space-y-2">
               <Label htmlFor="price">Price (UGX)</Label>
               <Input
@@ -351,18 +346,13 @@ function EditProductDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-category">Category</Label>
-              <Select defaultValue={product.category} onValueChange={(value) => setValue("category", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+  id="category"
+  {...register("category", { required: "Category is required" })}
+  placeholder="e.g., Household"
+/>
+{errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
+
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-price">Price (UGX)</Label>
