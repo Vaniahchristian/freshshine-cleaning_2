@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 
 export default function ProductsSection() {
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [notification, setNotification] = useState<string | null>(null)
 
   const { data: allProducts, isLoading, error } = useQuery<Product[]>({
     queryKey: ['all-products'],
@@ -26,6 +27,8 @@ export default function ProductsSection() {
   const { addToCart } = useCart()
   const handleAddToCart = (product: Product) => {
     addToCart({ id: product.id, quantity: 1, product })
+    setNotification(`${product.name} added to cart!`)
+    setTimeout(() => setNotification(null), 2000)
   }
 
   // Extract all categories from full product list
@@ -53,6 +56,12 @@ export default function ProductsSection() {
 
   return (
     <section id="products" className="py-24 bg-white relative overflow-hidden">
+      {/* Notification */}
+      {notification && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 transition-all animate-fade-in-out">
+          {notification}
+        </div>
+      )}
       {/* Background Decorations */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-40 left-20 w-64 h-64 bg-gradient-to-br from-yellow-200/20 to-orange-200/20 rounded-full blur-3xl" />

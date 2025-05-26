@@ -5,7 +5,12 @@ import React, { createContext, useContext, useState, ReactNode } from "react"
 export type CartItem = {
   id: number
   quantity: number
-  product?: any // Optionally store product info for easier display in cart
+  product: {
+    id: number
+    name: string
+    price: number
+    // other product fields...
+  }
 }
 
 type CartContextType = {
@@ -13,6 +18,9 @@ type CartContextType = {
   addToCart: (item: CartItem) => void
   removeFromCart: (id: number) => void
   clearCart: () => void
+  getItemTotal: (item: CartItem) => number
+  getCartTotal: () => number
+  formatPrice: (price: number) => string
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -45,8 +53,33 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => setCart([])
 
+  const getItemTotal = (item: CartItem) => {
+    return item.quantity * item.product.price
+  }
+
+  const getCartTotal = () => {
+    return cart.reduce((total, item) => total + getItemTotal(item), 0)
+  }
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-UG', {
+      style: 'currency',
+      currency: 'UGX',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price)
+  }
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{
+      cart,
+      addToCart,
+      removeFromCart,
+      clearCart,
+      getItemTotal,
+      getCartTotal,
+      formatPrice
+    }}>
       {children}
     </CartContext.Provider>
   )

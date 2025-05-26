@@ -17,7 +17,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
-  const { cart, removeFromCart, clearCart } = useCart()
+  const { cart, removeFromCart, clearCart, formatPrice, getItemTotal, getCartTotal } = useCart()
   const totalItems = cart.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
 
   useEffect(() => {
@@ -82,9 +82,14 @@ export default function Navbar() {
                       <li key={item.id} className="flex items-center justify-between py-2">
                         <div>
                           <span className="font-medium text-gray-800">
-                            {item.product?.name || `Product #${item.id}`}
+                            {item.product.name}
                           </span>
-                          <span className="ml-2 text-gray-500">x{item.quantity}</span>
+                          <div className="text-sm text-gray-500">
+                            <span>{formatPrice(item.product.price)} × {item.quantity}</span>
+                            <span className="ml-2 font-medium text-gray-700">
+                              = {formatPrice(getItemTotal(item))}
+                            </span>
+                          </div>
                         </div>
                         <button
                           className="text-red-500 hover:text-red-700 text-xs font-bold ml-2"
@@ -96,20 +101,26 @@ export default function Navbar() {
                     ))}
                   </ul>
                 )}
-                <div className="flex gap-2">
-                  <button
-                    className="flex-1 bg-gradient-to-r from-emerald-600 to-blue-600 text-white rounded-xl py-2 font-semibold hover:from-emerald-700 hover:to-blue-700 transition"
-                    onClick={() => { clearCart(); setCartOpen(false); }}
-                    disabled={cart.length === 0}
-                  >
-                    Checkout
-                  </button>
-                  <button
-                    className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-2 font-semibold hover:bg-gray-200 transition"
-                    onClick={() => setCartOpen(false)}
-                  >
-                    Close
-                  </button>
+                <div className="border-t border-gray-100 mt-4 pt-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="font-bold text-gray-800">Total:</span>
+                    <span className="font-bold text-lg text-emerald-600">{formatPrice(getCartTotal())}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      className="flex-1 bg-gradient-to-r from-emerald-600 to-blue-600 text-white rounded-xl py-2 font-semibold hover:from-emerald-700 hover:to-blue-700 transition"
+                      onClick={() => { clearCart(); setCartOpen(false); }}
+                      disabled={cart.length === 0}
+                    >
+                      Checkout
+                    </button>
+                    <button
+                      className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-2 font-semibold hover:bg-gray-200 transition"
+                      onClick={() => setCartOpen(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
