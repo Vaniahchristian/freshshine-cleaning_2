@@ -17,10 +17,17 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
   }
 
   return (
-    <motion.div variants={item} whileHover={{ y: -8 }} transition={{ duration: 0.3 }} className="group relative">
-      <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100">
+    <motion.div 
+      variants={item} 
+      whileHover={{ y: -8, scale: 1.02 }} 
+      transition={{ duration: 0.4, ease: "easeOut" }} 
+      className="group relative">
+
+      <div className="bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-200/50">
+
         {/* Image Container */}
-        <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+
           <img
             src={product.image || "/placeholder.svg"}
             alt={product.name}
@@ -28,28 +35,36 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
           />
 
           {/* Category Badge */}
-          <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
-            <span className="text-xs font-semibold text-gray-700">{product.category}</span>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-1.5 shadow-sm border border-gray-100/50">
+            <span className="text-sm font-medium text-gray-800">{product.category}</span>
+          </motion.div>
 
           {/* Rating */}
-          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
-            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-            <span className="text-xs font-semibold text-gray-700">4.8</span>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm border border-gray-100/50">
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+            <span className="text-sm font-medium text-gray-800">4.8</span>
+          </motion.div>
         </div>
 
         {/* Content */}
-        <div className="p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors duration-300">
+        <div className="p-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors duration-300">
             {product.name}
           </h3>
-          <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
+          <p className="text-gray-600 text-base mb-6 leading-relaxed line-clamp-2">{product.description}</p>
 
           {/* Price and CTA */}
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+              <span className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
                 UGX{product.price.toFixed(2)}
               </span>
               <span className="text-xs text-gray-500">Free shipping</span>
@@ -57,7 +72,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
             <Button
               size="sm"
               onClick={onAddToCart}
-              className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white px-4 py-2 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group"
+              className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group"
             >
               <ShoppingCart className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform duration-300" />
               Add

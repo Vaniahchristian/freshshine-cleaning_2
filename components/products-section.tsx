@@ -55,12 +55,18 @@ export default function ProductsSection() {
   const totalItems = cart.reduce((acc: number, item: { quantity: number }) => acc + item.quantity, 0)
 
   return (
-    <section id="products" className="py-24 bg-white relative overflow-hidden">
+    <section id="products" className="py-32 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
       {/* Notification */}
       {notification && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 transition-all animate-fade-in-out">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white border border-emerald-200 text-emerald-700 px-6 py-3 rounded-xl shadow-lg z-50 flex items-center gap-2"
+        >
+          <ShoppingBag className="w-4 h-4" />
           {notification}
-        </div>
+        </motion.div>
       )}
       {/* Background Decorations */}
       <div className="absolute inset-0 overflow-hidden">
@@ -76,10 +82,14 @@ export default function ProductsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-full px-4 py-2 border border-emerald-200 mb-6">
-            <ShoppingBag className="w-4 h-4 text-emerald-600" />
-            <span className="text-sm font-medium text-emerald-700">Premium Products</span>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 bg-white rounded-full px-6 py-3 border border-gray-200 shadow-md mb-8 hover:shadow-lg transition-shadow duration-300">
+            <ShoppingBag className="w-5 h-5 text-emerald-600" />
+            <span className="text-base font-medium bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">Premium Products</span>
+          </motion.div>
 
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
             <span className="text-gray-900">Professional</span>
@@ -103,15 +113,15 @@ export default function ProductsSection() {
           transition={{ duration: 0.5 }}
           className="flex flex-wrap justify-center gap-4 mb-12"
         >
-          <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-2xl p-2 border border-gray-200 shadow-lg">
+          <div className="flex items-center gap-3 bg-white/90 backdrop-blur-sm rounded-2xl p-3 border border-gray-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 max-w-3xl mx-auto">
             <Filter className="w-4 h-4 text-gray-500 ml-2" />
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                className={`px-5 py-2.5 rounded-xl font-medium transition-all duration-300 ${
                   selectedCategory === category
-                    ? "bg-gradient-to-r from-emerald-600 to-blue-600 text-white shadow-lg"
+                    ? "bg-gradient-to-r from-emerald-600 to-blue-600 text-white shadow-lg scale-105"
                     : "text-gray-600 hover:text-emerald-600 hover:bg-emerald-50"
                 }`}
               >
@@ -127,7 +137,7 @@ export default function ProductsSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16"
         >
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} onAddToCart={() => handleAddToCart(product)} />
