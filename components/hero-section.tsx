@@ -104,7 +104,7 @@ export default function HeroSection() {
             className="space-y-8"
           >
             {/* Badge */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -112,7 +112,7 @@ export default function HeroSection() {
             >
               <Sparkles className="w-4 h-4 text-emerald-600" />
               <span className="text-sm font-medium text-emerald-700">Premium Cleaning Services</span>
-            </motion.div>
+            </motion.div> */}
 
             {/* Main Heading */}
             <div className="space-y-4">
@@ -185,14 +185,24 @@ export default function HeroSection() {
           >
             <div className="relative">
               {/* Main Image */}
-              <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl mt-24">
+              <motion.div
+                animate={{
+                  y: [0, 20, 0]
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="relative z-10 rounded-3xl overflow-hidden shadow-2xl mt-24 mb-24"
+              >
                 <img
                   src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=700&fit=crop&crop=center"
                   alt="Professional Cleaning Service"
                   className="w-full h-[500px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-              </div>
+              </motion.div>
 
               {/* Background Decoration */}
               <div className="absolute -inset-4 bg-gradient-to-br from-emerald-200/20 to-blue-200/20 rounded-3xl -z-10 blur-xl" />

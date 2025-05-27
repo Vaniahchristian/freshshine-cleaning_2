@@ -21,11 +21,20 @@ export default function Navbar() {
   const totalItems = cart.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
 
   useEffect(() => {
+    let lastScrollY = window.scrollY
+    let ticking = false
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20)
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
@@ -38,11 +47,13 @@ export default function Navbar() {
   }
 
   return (
-    <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? "bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200/50" : "bg-transparent"
+    <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 transform ${
+      isScrolled 
+        ? "bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200/50 translate-y-0" 
+        : "bg-transparent -translate-y-1"
     }`}>
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-20 transition-all duration-500">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className="relative">

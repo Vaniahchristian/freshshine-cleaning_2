@@ -56,11 +56,12 @@ export default function HowItWorks() {
   }
 
   return (
-    <section id="how-it-works" className="py-24 bg-gradient-to-br from-gray-50 to-blue-50/30 relative overflow-hidden">
+    <section id="how-it-works" className="py-32 bg-gradient-to-br from-gray-50 via-blue-50/10 to-emerald-50/20 relative overflow-hidden">
       {/* Background Decorations */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-emerald-200/20 to-blue-200/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-br from-purple-200/20 to-pink-200/20 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-emerald-200/30 to-blue-200/30 rounded-full blur-3xl animate-pulse-slow" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-br from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse-slow delay-1000" />
+        <div className="absolute top-40 right-40 w-48 h-48 bg-gradient-to-br from-blue-200/20 to-emerald-200/20 rounded-full blur-2xl animate-pulse-slow delay-2000" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -71,12 +72,12 @@ export default function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 border border-emerald-200 mb-6">
+          <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-5 py-2.5 border border-emerald-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 mb-8">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
             <span className="text-sm font-medium text-emerald-700">Simple Process</span>
           </div>
 
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
+          <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
             <span className="text-gray-900">How It</span>
             <br />
             <span className="bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -84,7 +85,7 @@ export default function HowItWorks() {
             </span>
           </h2>
 
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600/90 max-w-3xl mx-auto leading-relaxed font-medium">
             Getting your space professionally cleaned has never been easier. Follow our simple three-step process.
           </p>
         </motion.div>
@@ -102,12 +103,12 @@ export default function HowItWorks() {
                 {/* Step Number */}
                 <div className="relative mb-8">
                   <div
-                    className={`w-20 h-20 bg-gradient-to-br ${step.color} rounded-3xl flex items-center justify-center mx-auto shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:scale-110`}
+                    className={`w-24 h-24 bg-gradient-to-br ${step.color} rounded-[2rem] flex items-center justify-center mx-auto shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:scale-110`}
                   >
                     {step.icon}
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gray-100">
-                    <span className="text-sm font-bold text-gray-700">{index + 1}</span>
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gray-100">
+                    <span className="text-base font-bold bg-gradient-to-br from-gray-700 to-gray-900 bg-clip-text text-transparent">{index + 1}</span>
                   </div>
                 </div>
 
@@ -134,14 +135,14 @@ export default function HowItWorks() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-20 text-center"
+          className="mt-24 text-center"
         >
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-12 border border-gray-200/50 shadow-xl">
+          <div className="bg-white/90 backdrop-blur-sm rounded-[2.5rem] p-10 md:p-16 border border-gray-200/50 shadow-2xl hover:shadow-3xl transition-shadow duration-500 group">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">Ready to Get Started?</h3>
             <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
               Join thousands of satisfied customers who trust us with their cleaning needs.
             </p>
-            <button className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group">
+            <button className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white px-10 py-5 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group">
               Book Your Service
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </button>
