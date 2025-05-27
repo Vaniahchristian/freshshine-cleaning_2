@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Service, Product, Request, SiteContent } from './types';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://websitebackend-z9go.onrender.com/api';
 
 // Services
 export const getServices = async (): Promise<Service[]> => {
